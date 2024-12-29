@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librarian Login - BITS Pilani Library</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                        url('https://library.bits-pilani.ac.in/assets/img/library.jpg') no-repeat center center/cover;
+            height: 100vh;
+            color: white;
+        }
+
+        .login-container {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .form-control:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-color: white;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    {%load crispy_forms_tags%}
+    <div class="container h-100 d-flex justify-content-center align-items-center">
+        <div class="login-container col-md-4">
+            <div class="login-header">
+                <h1 class="h4">Librarian Login</h1>
+                <p>Welcome to BITS Pilani Library</p>
+            </div>
+            <div class = "content-section">
+                <form method = "POST">
+                    {%csrf_token%}
+                    <fieldset class = "form-group">
+                        <legend class = "border-bottom mb-4">Log In</legend>
+                        {{form|crispy}}
+                    </fieldset>
+                    <div class = "form-group mt-2">
+                        <button class = "btn btn-outline-primary" type = "submit">Log In</button>
+                    </div> 
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="py-3">
+        <p>&copy; 2024 BITS Pilani Library. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{%extends 'home/lib_base.html' %}
+{%block title%}Librarian Portal{%endblock title%}
+{%block home%}active{%endblock home%}
+{%block style%}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding-top: 2rem;
+        width:1400px;
+        margin-left: -137px;
+    }
+</style>
+{%endblock style%}
+
+{%block content%}
+<div class="main-container">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <!-- Main Content Area -->
+            <div class="col-lg-7 col-md-6 p-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <!-- User Image -->
+                            <div class="col-md-3 text-center">
+                                <img src="{{user.profile.image.url}}" 
+                                     alt="Librarian Profile" 
+                                     class="img-fluid rounded-circle mb-3"
+                                     style="max-width: 150px; width: 100%; height: auto;">
+                            </div>
+                            <!-- User Details -->
+                            <div class="col-md-9">
+                                <h3 class="mb-3">Welcome {{user.username}}</h3>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <p class="mb-2"><strong>First Name: </strong>{{user.first_name}}</p>
+                                        <p class="mb-2"><strong>Last Name: </strong>{{user.last_name}}</p>
+                                        <p class="mb-2 text-break"><strong>Email: </strong><span style="font-size: 0.95rem;">{{user.email}}</span></p>
+                                        <a class="btn btn-primary mt-2" href="{%url 'lib_profileUpdate'%}">Update Profile</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{%endblock content%}

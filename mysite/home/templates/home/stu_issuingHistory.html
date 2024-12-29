@@ -1,0 +1,56 @@
+{%extends 'home/stu_base.html'%}
+{%block title%}Issuing History{%endblock title%}
+
+{%block issuingHistory%}active{%endblock issuingHistory%}
+
+{%block content%}
+    <div class = "container content-section">
+        <h1 class = "border-bottom mb-2">Currently Borrowed Books</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Borrowed On</th>
+                <th scope="col">Return Date</th>
+            </tr>
+            </thead>
+            <tbody>
+                {%for borrowBook in borrowBooks%}
+                <tr>
+                    <th scope="row"><a href = "{%url 'stu_book-page' borrowBook.book.id %}">{{borrowBook.book.name}}</a></th>
+                    <td>{{borrowBook.date_borrow|date:"F d, Y"}}</td>
+                    <td>{{borrowBook.date_return|date:"F d, Y"}}</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+    <div class = "container content-section">
+        <h1 class = "border-bottom mb-2">Returned Books</h1>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Borrowed On</th>
+                <th scope="col">Returned On</th>
+                <th scope="col">Late Fees</th>
+            </tr>
+            </thead>
+            <tbody>
+                {%for returnedBook in returnedBooks%}
+                <tr>
+                    <th scope="row"><a href = "{%url 'stu_book-page' returnedBook.book.id %}">{{returnedBook.book.name}}</a></th>
+                    <td>{{returnedBook.date_borrow|date:"F d, Y"}}</td>
+                    <td>{{returnedBook.date_return|date:"F d, Y"}}</td>
+                    {%if returnedBook.is_latefees == True%}
+                        <td>{{late_fees}}</td>
+                    {%else%}
+                        <td>-</td>
+                    {%endif%}
+                    
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+    </div>
+{%endblock content%}

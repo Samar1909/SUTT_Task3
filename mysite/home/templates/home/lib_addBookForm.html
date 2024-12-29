@@ -1,0 +1,35 @@
+{%extends "home/lib_base.html"%}
+{%block title%}Add Books using forms{%endblock title%}
+{%block content%}
+    <h2 class = "border-bottom mb-4">Enter Book Details</h2> 
+    <form method = "post" action = "{%url 'addBook'%}">
+        {%csrf_token%}
+        <div class = "form-group">
+            <label for = "name">Name:</label>   
+            <input type = "text" id = "name" class = "form-control" name = "name" placeholder="Harry Potter and the Philosopher's Stone" required = True>
+        </div>
+        <br>
+        <div class = "form-group">
+            <label for = "author">Author</label>
+            <input type = "text" id = "author" name = "author" class = "form-control" placeholder="J.K Rowling" required = True>
+        </div>
+        <br>
+        <div class = "form-group">
+            <label for = "pub">Name of Publisher</label>
+            <input type = "text" id = "pub" name = "pub" class = "form-control" placeholder = "Bloomsbury" required = True>
+        </div>
+        <br>
+        <div class = "form-group">
+            <label for = "ISBN">ISBN Code</label>
+            <input type = "text" id = "ISBN" name = "ISBN" class = "form-control" placeholder = "978-0-7475-3269-9" required = True>
+        </div>
+        <br>
+        <div class = "form-group">
+            <label for = "copies_total">Number of copies available</label>
+            <input type = "number" id = "copies_total" name = "copies_total" class = "form-control" placeholder = "100" required = True>
+        </div>
+        <br>
+        <input type = "reset" class = "btn btn-outline-primary" required name = "files">
+        <input type = "submit" class = "btn btn-outline-primary mx-2" value="Add Book">
+    </form>
+{%endblock content%}

@@ -1,0 +1,33 @@
+{%extends 'home/lib_base.html'%}
+{%load static%}
+{%block title%}Add Books using Excel{%endblock title%}
+{%block content%}
+<div class = "content-section">
+    <div class = "form-group">
+        <h2 class = "border-bottom mb-2">Add Books using Excel</h2>
+        <ul>
+            <li>Download the excel template by clicking on the button below.</li>
+            <li>Add book details to the excel file</li>
+            <li>Click on the Browse button and select the excel file</li>
+            <li>Click on Upload file</li>
+        </ul>
+        <a href="{% static 'home/book_template.xlsx' %}" class="btn btn-primary">Download Excel Template</a></div>
+        <form method = "post" enctype="multipart/form-data">
+            {%csrf_token%}
+            <div class = "content-section">
+                <fieldset class = "form-group">
+                    {{form.as_p}}
+                </fieldset>
+                <div class = "form-group">
+                    <input type="file" required name = "files"> 
+                    <button type="submit" class = "btn btn-primary  ">Upload file</button> 
+                </div>
+               
+            </div>
+        </form>
+    <div class = "form-group">
+        
+        <!-- <button class = "btn-outline-primary mx-4"><a href = "#">Download here</a></button> -->
+    </div>
+</div>
+{%endblock%}

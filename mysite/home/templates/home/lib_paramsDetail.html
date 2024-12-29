@@ -1,0 +1,21 @@
+{%extends 'home/lib_base.html'%}
+{%block title%}Library Settings{%endblock%}
+{%block params%}active{%endblock params%}
+{%block content%}
+    <h1 class = "border-bottom mb-4">Late Fees and Issue Period</h1>
+    <div class = "container">
+        <form method = "get">
+            <div class = "form-group">
+                    <label>Late Fees: </label>
+                    <input type="number" id="late_fees" name="late_fees" value="{{library_settings.late_fees}}" disabled class="disabled"><br><br>
+            </div>
+            <div class = "form-group">
+                <label>Issue Period: </label>
+                <input type="number" id="issue_period" name="issue_period" value="{{library_settings.issue_period}}" disabled class="disabled"><br><br>
+            </div>
+            <div class = "form-group">
+                <a href="{%url 'lib_book-updatePage' 1 %}" class="btn btn-primary">Edit</a></div>
+            </div>
+        </form>
+    </div>
+{%endblock content%}

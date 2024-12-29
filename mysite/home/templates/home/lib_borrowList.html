@@ -1,0 +1,28 @@
+{%extends 'home/lib_base.html' %}
+{%block title%}Student List{%endblock title%}
+
+{%block content%}
+    <h1 class = "border-bottom mb-3">List of students who have currently borrowed {{book.name}}</h1>
+     
+        <div class = "container content-section">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Borrowed On</th>
+                    <th scope="col">Return Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {%for borrower in borrowers%}
+                    <tr>
+                        <th scope="row">{{borrower.user.username}}</th>
+                        <td>{{borrower.date_borrow|date:"F d, Y"}}</td>
+                        <td>{{borrower.date_return|date:"F d, Y"}}</td>
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div> 
+    
+{%endblock content%}
