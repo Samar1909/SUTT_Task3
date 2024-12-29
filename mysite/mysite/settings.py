@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from django.contrib.messages import constants as messages
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,15 +22,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-v8*tvv^c%et*sn78p_lth_nccz3*3)u-wwodmjw032do+48kbi'
+# Get the secret key from the environment variables (from .env file)
+SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# Get the DEBUG setting from the environment variables (from .env file)
 DEBUG = True
+
+
 
 ALLOWED_HOSTS = []
 
-SITE_ID = 2
+SITE_ID = 3
 
 # Application definition
 
@@ -163,3 +166,4 @@ LOGOUT_REDIRECT_URL = ''
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
