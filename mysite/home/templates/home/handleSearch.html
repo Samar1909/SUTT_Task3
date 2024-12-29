@@ -1,0 +1,44 @@
+{%extends base_template%}
+{%block title%}Search Results{%endblock title%}
+{%block content%}
+    <h2 class = "border-bottom mb-4">Search results</h2>
+    {%if allBooks|length < 1%}
+        <p>No search results</p>
+        <p>Your search query: <b>{{query}}</b> did not match any documents. <br>
+            Suggestions:
+            <ul>
+            <li>Try different keywords</li>
+            <li>Make sure that all the words are spelled correctly</li>
+            <li>Try more general keywords</li>
+            <li>Try fewer keywords</li>
+            </ul>
+        </p>
+    
+    {%else%}
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Author</th>
+            <th scope="col">Publisher</th>
+          </tr>
+        </thead>
+        <tbody>
+            {%for book in allBooks%}
+            <tr>
+                <th scope="row">{{book.id}}</th>
+                {%if user.profile.is_student == True%}
+                <td><a href = "{%url 'stu_book-page' book.id %}">{{book.name}}</a></td>
+                {%else%}
+                <td><a href = "{%url 'lib_book-page' book.id %}">{{book.name}}</a></td>
+                {%endif%}
+                <td>{{book.author}}</td>
+                <td>{{book.pub}}</td>
+            </tr>
+            {%endfor%}
+        </tbody>
+    </table>    
+    {%endif%}
+
+{%endblock content%}

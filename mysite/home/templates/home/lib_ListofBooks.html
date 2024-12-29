@@ -1,0 +1,29 @@
+{%extends base_template%}
+{%block title%}List of books{%endblock title%}
+{%block bookList%}active{%endblock bookList%}
+{%block content%}
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Author</th>
+        <th scope="col">Publisher</th>
+      </tr>
+    </thead>
+    <tbody>
+        {%for book in books%}
+        <tr>
+            <th scope="row">{{book.id}}</th>
+            {%if user.profile.is_student == True%}
+                <td><a href = "{%url 'stu_book-page' book.id %}">{{book.name}}</a></td>
+            {%else%}
+                <td><a href = "{%url 'lib_book-page' book.id %}">{{book.name}}</a></td>
+            {%endif%}
+            <td>{{book.author}}</td>
+            <td>{{book.pub}}</td>
+        </tr>
+        {%endfor%}
+    
+  
+{%endblock content%}
