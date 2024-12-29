@@ -12,3 +12,4 @@ env/
 # Secrets
 *.env
 *.DS_Store
+client_secret*.json
