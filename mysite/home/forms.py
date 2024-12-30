@@ -15,13 +15,14 @@ class ProfileUpdateForm(forms.ModelForm):
         model = Profile
         fields = ['hostel', 'room', 'image']
 
-class lib_ProfileUpdateForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['image']
-
 class lib_UserUpdateForm(forms.ModelForm):
     email = forms.EmailField()
     class Meta:
         model = User
         fields = ['username', 'first_name','last_name','email']
+
+
+class lib_ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['image']

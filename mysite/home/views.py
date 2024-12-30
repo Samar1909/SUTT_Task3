@@ -5,7 +5,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 from .models import *
-from .forms import *
+from .forms import *    
 import pandas as pd
 from django.contrib.auth.decorators import login_required
 from django.views.generic import (DetailView, UpdateView, ListView, CreateView)
@@ -17,22 +17,22 @@ def home_page(request):
     current = request.user
     if current.is_authenticated:
         email = current.email
-        if email:
-            if "@pilani.bits-pilani.ac.in" in email:
-                current.save()
-                current.profile.is_student = True
-                current.profile.save()
-                return redirect('student-home')
-            else:
-                for message in messages.get_messages(request):
-                    pass
-                messages.error(request, f'Pls enter a valid BITS email')
-                current.delete()
-                return redirect('home-page')
-        else:
+        if "@pilani.bits-pilani.ac.in" in email:
+            current.save()
+            current.profile.is_student = True
+            current.profile.save()
+            return redirect('student-home')
+        
+        elif request.user.profile.is_librarian == True:
             messages.success(request, f'Successfully Signed-In as {current.username}')
             return redirect('librarian-home')
-
+        
+        else:
+            for message in messages.get_messages(request):
+                pass
+            messages.error(request, f'Pls enter a valid BITS email')
+            current.delete()
+            return redirect('home-page')
     else:
         return render(request, 'home/base.html')
 
@@ -151,7 +151,9 @@ def lib_borrowList(request, pk):
 def lib_profileUpdate(request):
     if request.method == 'POST':
         u_form = lib_UserUpdateForm(request.POST, instance = request.user)
-        p_form = lib_ProfileUpdateForm(request.POST, request.FILES, instance = request.user.profile)
+        p_form = lib_ProfileUpdateForm(request.POST, 
+                                       request.FILES, 
+                                       instance = request.user.profile)
 
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
