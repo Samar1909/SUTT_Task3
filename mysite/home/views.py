@@ -68,7 +68,7 @@ def addBookExcel(request):
     if request.method == "POST":
         file = request.FILES['files']
         try:
-            df = pd.read_excel(path)    
+            df = pd.read_excel(file)    
             for i in range(0, len(df)):
                 books.objects.create(
                     name = df['Name'][i],
