@@ -36,9 +36,6 @@ def home_page(request):
     else:
         return render(request, 'home/base.html')
 
-def logout_view(request):
-    logout(request)
-    return HttpResponse("this is logout view")\
     
 #librarian views start here
 @login_required
