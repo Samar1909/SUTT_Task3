@@ -84,8 +84,7 @@ def addBookExcel(request):
             messages.error(request, f'Error: {e}')
             return redirect('librarian-home')
     else:
-        file = UploadFileForm()
-        return render(request, "home/lib_addBookExcel.html", {"file": file})
+        return render(request, "home/lib_addBookExcel.html")
     
 @login_required
 def listOfBooks(request):
