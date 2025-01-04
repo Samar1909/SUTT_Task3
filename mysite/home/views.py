@@ -36,7 +36,7 @@ def home_page(request):
     else:
         return render(request, 'home/base.html')
 
-    
+
 #librarian views start here
 @login_required
 def librarian_home(request):
@@ -67,8 +67,6 @@ def addBook(request):
 def addBookExcel(request):
     if request.method == "POST":
         file = request.FILES['files']
-        object = File.objects.create(file = file)
-        path = file.file
         try:
             df = pd.read_excel(path)    
             for i in range(0, len(df)):
