@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import (DetailView, UpdateView, ListView, CreateView)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import timedelta
+from django.core.paginator import Paginator
 # Create your views here.
 
 def home_page(request):
@@ -92,8 +93,13 @@ def listOfBooks(request):
         base_template = 'home/stu_base.html'
     else:
         base_template = 'home/lib_base.html'
+
+    book_list = books.objects.all()
+    paginator = Paginator(book_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     context = {
-        "books": books.objects.all(),
+        "books": page_obj,
         "base_template": base_template
     }
     return render(request, 'home/lib_ListofBooks.html', context)

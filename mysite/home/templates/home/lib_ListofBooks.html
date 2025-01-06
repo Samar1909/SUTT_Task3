@@ -24,6 +24,27 @@
             <td>{{book.pub}}</td>
         </tr>
         {%endfor%}
-    
-  
+    </tbody>
+    </table>
+    <div>
+        {%if books.has_other_pages%}
+          {%if books.has_previous%}
+            <a class = "btn btn-otline-info mb-4" href = "?page=1">First</a>
+            <a class = "btn btn-otline-info mb-4" href = "?page={{books.previous_page_number}}">Previous</a>
+          {%endif%}
+
+          {%for num in books.paginator.page_range%}
+            {%if num == books.number%}
+              <a class = "btn btn-info mb-4" href = "?page={{num}}">{{num}}</a>
+            {%elif num > books.number|add:'-3' and num < books.number|add:'3' %}
+              <a class = "btn btn-otline-info mb-4" href = "?page={{num}}">{{num}}</a>
+            {%endif%}
+          {%endfor%} 
+
+          {%if books.has_next%}
+            <a class = "btn btn-otline-info" href = "?page={{books.next_page_number}}">Next</a>
+            <a class = "btn btn-otline-info" href = "?page={{books.paginator.num_pages}}">Last</a>
+          {%endif%}
+        {%endif%}    
+      </div>
 {%endblock content%}
