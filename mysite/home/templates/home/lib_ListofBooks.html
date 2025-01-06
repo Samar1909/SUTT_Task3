@@ -42,8 +42,8 @@
           {%endfor%} 
 
           {%if books.has_next%}
-            <a class = "btn btn-otline-info" href = "?page={{books.next_page_number}}">Next</a>
-            <a class = "btn btn-otline-info" href = "?page={{books.paginator.num_pages}}">Last</a>
+            <a class = "btn btn-otline-info mb-4" href = "?page={{books.next_page_number}}">Next</a>
+            <a class = "btn btn-otline-info mb-4" href = "?page={{books.paginator.num_pages}}">Last</a>
           {%endif%}
         {%endif%}    
       </div>
