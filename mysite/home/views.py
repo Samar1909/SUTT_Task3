@@ -12,6 +12,7 @@ from django.views.generic import (DetailView, UpdateView, ListView, CreateView)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import timedelta
 from django.core.paginator import Paginator
+from django.views import View
 # Create your views here.
 
 def home_page(request):
@@ -64,12 +65,14 @@ def addBook(request):
     else:
         return HttpResponse("404 - Not allowed")
     
-@login_required
-def addBookExcel(request):
-    if request.method == "POST":
+    
+class addBookExcel(LoginRequiredMixin, View):
+    template_name = "home/lib_addBookExcel.html"
+
+    def post(self, request):
         file = request.FILES['files']
         try:
-            df = pd.read_excel(file)    
+            df = pd.read_excel(file)
             for i in range(0, len(df)):
                 books.objects.create(
                     name = df['Name'][i],
@@ -84,8 +87,10 @@ def addBookExcel(request):
         except Exception as e:
             messages.error(request, f'Error: {e}')
             return redirect('librarian-home')
-    else:
-        return render(request, "home/lib_addBookExcel.html")
+    
+    def get(self, request):
+        return render(request, self.template_name)
+
     
 @login_required
 def listOfBooks(request):
@@ -147,11 +152,14 @@ def lib_borrowList(request, pk):
         return redirect('lib_book-page', pk = pk)
     return render(request, 'home/lib_borrowList.html', {"book": book, "borrowers": borrowers})
 
-@login_required
-def lib_profileUpdate(request):
-    if request.method == 'POST':
+
+class lib_profileUpdate(LoginRequiredMixin, View):
+
+    template_name = "home/lib_profileUpdate.html"
+
+    def post(self, request, *args, **kwargs):
         u_form = lib_UserUpdateForm(request.POST, instance = request.user)
-        p_form = lib_ProfileUpdateForm(request.POST, 
+        p_form = lib_ProfileUpdateForm(request.POST,
                                        request.FILES, 
                                        instance = request.user.profile)
 
@@ -161,15 +169,15 @@ def lib_profileUpdate(request):
             messages.success(request, f'Your account has been updated!')
             return redirect('librarian-home')
         
-    else:
+    def get(self, request, *args, **kwargs):
         u_form = lib_UserUpdateForm(instance = request.user)
         p_form = lib_ProfileUpdateForm(instance = request.user.profile)
-
-    context = {
+        context = {
         'u_form':u_form,
         'p_form':p_form
-    }
-    return render(request, 'home/lib_profileUpdate.html', context)
+        }
+        return render(request, 'home/lib_profileUpdate.html', context)
+  
 
 class lib_feedbackList(LoginRequiredMixin, ListView):
     model = feedback
