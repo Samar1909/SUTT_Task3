@@ -32,7 +32,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-SITE_ID = 3
+SITE_ID = 5 
 
 # Application definition
 
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'django.contrib.postgres',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -102,8 +103,12 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'elib',
+        'USER': 'dummy',
+        'PASSWORD': 'testing321',
+        'HOST': 'localhost', 
+        'PORT': '5432'
     }
 }
 

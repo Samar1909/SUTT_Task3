@@ -13,6 +13,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import timedelta
 from django.core.paginator import Paginator
 from django.views import View
+from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank, TrigramSimilarity
 # Create your views here.
 
 def home_page(request):
@@ -221,24 +222,23 @@ def stu_profileUpdate(request):
 
 def HandleSearch(request):
     if request.user.is_authenticated:
-        query = request.GET['query']
+        q = request.GET['query']
         if request.user.profile.is_student == True:
             base_template = 'home/stu_base.html'
         else:
             base_template = 'home/lib_base.html'
         
-        if len(query) > 85:
-            allBooks = []
+        if q:
+            vector = SearchVector('name', 'author', 'pub', 'isbn')
+            query = SearchQuery(q)
+            allBooks = books.objects.annotate(rank = SearchRank(vector, query)).filter(rank__gte = 0.001).order_by('-rank')
         else:
-            allBooksName = books.objects.filter(name__icontains = query)
-            allBooksAuthor = books.objects.filter(author__icontains = query)
-            allBooksisbn = books.objects.filter(isbn__icontains = query)
-            allBookspub = books.objects.filter(pub__icontains = query)
-            allBooks = allBooksName.union(allBooksAuthor, allBooksisbn, allBookspub)
+            allBooks = 0
+
         context = {
             "base_template" : base_template,
             "allBooks" : allBooks,
-            "query" : query
+            "query" : q
         }
         if len(allBooks) == 0:
             messages.warning(request, "No search results found. Please refine your query.")
