@@ -256,7 +256,7 @@ def stu_bookDetailPage(request, pk):
         if rate_set.count() != 0:
             for rate in rate_set:
                 sum += rate.rating
-            avgRating = sum/rate_set.count()
+            avgRating = round(sum/rate_set.count(), 2)
         context = {
             'book' : current_book,
             'avgRating' : avgRating,
