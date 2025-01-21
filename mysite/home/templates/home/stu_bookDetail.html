@@ -51,6 +51,15 @@
             <strong>Average Rating: </strong><span>Students haven't rated this book yet</span>
         </div>
         {%endif%}
+        {%if not favourite_book%}
+        <div class="form-group d-flex align-items-center">
+            <a class = "btn btn-primary" href = "{%url 'mark_favourite' book.id%}">Add To Favourites</a>
+        </div>
+        {%else%}
+        <div class="form-group d-flex align-items-center">
+            <a class = "btn btn-primary" href = "{%url 'remove_favourite' book.id%}">Remove from Favourites</a>
+        </div>
+        {%endif%}
         <div class="row mb-3">
             <div class="col-auto">
                 <a href="{% url 'stu_borrowBook' book.id %}">

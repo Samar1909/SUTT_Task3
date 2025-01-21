@@ -43,7 +43,7 @@
                     <td>{{returnedBook.date_borrow|date:"F d, Y"}}</td>
                     <td>{{returnedBook.date_return|date:"F d, Y"}}</td>
                     {%if returnedBook.is_latefees == True%}
-                        <td>{{late_fees}}</td>
+                        <td> &#8377; {{returnedBook.lateFees_final}}</td>
                     {%else%}
                         <td>-</td>
                     {%endif%}

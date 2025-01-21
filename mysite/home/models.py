@@ -55,6 +55,7 @@ class File(models.Model):
 class library_settings(models.Model):
     late_fees = models.IntegerField()
     issue_period = models.IntegerField()
+    compound_interest = models.IntegerField(default = 0)
 
     def get_absolute_url(self):
         return reverse('lib_paramsDetail', kwargs = {'pk': self.pk})
@@ -73,6 +74,7 @@ class returnBook(models.Model):
     is_latefees = models.BooleanField(default=False)
     date_borrow = models.DateTimeField(default = timezone.now)
     date_return = models.DateTimeField(default = timezone.now)
+    lateFees_final = models.FloatField(default=0)
     
 class feedback(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -91,3 +93,8 @@ class rate(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     book = models.ForeignKey(books, on_delete=models.CASCADE)
     rating = models.IntegerField()
+
+class favourite(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    book = models.ForeignKey(books, on_delete = models.CASCADE)
+    is_favourite = models.BooleanField(default=False)

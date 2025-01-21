@@ -1,7 +1,7 @@
 from . import views
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from .views import (lib_bookUpdatePage, lib_paramsDetails, lib_paramsUpdate, stu_feedback, stu_feedbackList, lib_feedbackList, addBookExcel, lib_profileUpdate)
+from .views import (lib_bookUpdatePage, lib_paramsDetails, lib_paramsUpdate, stu_feedback, stu_feedbackList, lib_feedbackList, addBookExcel, lib_profileUpdate, favourite_list)
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -32,6 +32,9 @@ urlpatterns = [
     path('student/<int:pk>/rate', views.stu_rating, name = "stu_rating"),
     path('student/profileUpdate', views.stu_profileUpdate, name = "stu_profileUpdate"),
     path('student/feedbackList', stu_feedbackList.as_view(), name = "stu_feedbackList"),
+    path('student/<int:pk>/markFavourite', views.mark_favourite, name = "mark_favourite"),
+    path('student/<int:pk>/removeFavourite', views.remove_favourite, name = "remove_favourite"),
+    path('student/favouriteList', favourite_list.as_view(), name = "favourite_list")
 ]  
 
 if settings.DEBUG:

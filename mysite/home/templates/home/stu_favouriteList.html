@@ -1,0 +1,42 @@
+{%extends 'home/stu_base.html'%}
+{%block title%}Favourites List{%endblock%}
+
+{%block favouriteList%}active{%endblock favouriteList%}
+
+{%block style%}
+
+{%endblock style%}
+
+{% block content %}
+<h1 class = "border-bottom mb-4">Your Favourites</h1>
+{%if favourites%}
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Author</th>
+            <th scope="col">Publisher</th>
+        </tr>
+        </thead>
+        <tbody>
+            {%for favourite in favourites%}
+            <tr>
+                <th scope="row">{{favourite.book.id}}</th>
+                <td><a href = "{%url 'stu_book-page' favourite.book.id %}">{{favourite.book.name}}</a></td>
+                <td>{{favourite.book.author}}</td>
+                <td>{{favourite.book.pub}}</td>
+            </tr>
+            {%endfor%}
+        </tbody>
+    </table> 
+{%else%}
+    <p>No Book marked as Favourites</p>
+{%endif%}
+{% endblock content %}         
+                    
+          
+    
+    
+        
+     

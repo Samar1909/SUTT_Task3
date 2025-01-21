@@ -140,8 +140,8 @@ class lib_paramsDetails(LoginRequiredMixin, DetailView):
 
 class lib_paramsUpdate(LoginRequiredMixin, UpdateView):
     model = library_settings
-    fields = ['late_fees', 'issue_period']
-    template_name = 'home/lib_bookUpdate.html'
+    fields = ['late_fees', 'issue_period', 'compound_interest']
+    template_name = 'home/lib_paramsUpdate.html'
 
 @login_required
 def lib_borrowList(request, pk):
@@ -250,16 +250,17 @@ def HandleSearch(request):
 
 def stu_bookDetailPage(request, pk):
     if request.user.is_authenticated:
-        book = books.objects.filter(id = pk).first()
-        rate_set = book.rate_set.all()
+        current_book = books.objects.filter(id = pk).first()
+        rate_set = current_book.rate_set.all()
         sum = 0; avgRating = 0
         if rate_set.count() != 0:
             for rate in rate_set:
                 sum += rate.rating
             avgRating = sum/rate_set.count()
         context = {
-            'book' : book,
-            'avgRating' : avgRating
+            'book' : current_book,
+            'avgRating' : avgRating,
+            'favourite_book': request.user.favourite_set.filter(book = current_book)
         }
                   
         return render (request, 'home/stu_bookDetail.html', context)
@@ -278,7 +279,7 @@ def stu_borrowBook(request, pk):
                     messages.error(request, f'You can only borrow one copy of this book at a time')
                     return redirect('stu_book-page', pk = pk)
             newBook = request.user.borrowbook_set.create(book = current_book, params = library_settings.objects.filter(id = 1).first())
-            newBook.date_return = newBook.date_borrow + timedelta(days = issue_period)
+            newBook.date_return = newBook.date_borrow + timedelta(seconds = issue_period)
             newBook.save()
             current_book.copies_available -= 1
             current_book.save()
@@ -303,9 +304,14 @@ def stu_returnBook(request, pk):
                     borrow_book.delete()  
                     messages.success(request, f'You have successfully returned {current_book.name}!')
                     if timezone.now() > borrow_book.date_return:
+                        p = library_settings.objects.filter(id = 1).first().late_fees
+                        r = library_settings.objects.filter(id = 1).first().compound_interest
+                        t = (timezone.now() - borrow_book.date_return)/timedelta(seconds = 1)
+                        compoundInterest = round(p * ((1 + r/100)**(t)), 2)
                         return_book.is_latefees = True
+                        return_book.lateFees_final = compoundInterest
                         return_book.save()
-                        messages.success(request, f'You have been charged with Late fees of Rs {library_settings.objects.filter(id = 1).first().late_fees}')
+                        messages.success(request, f'You have been charged with Late fees of Rs {compoundInterest} with daily compound interest of {r} %')
                     return redirect('stu_book-page', pk = pk)
             messages.error(request, f'You have not borrowed this book yet.')
             return redirect('stu_book-page', pk = pk)
@@ -320,7 +326,6 @@ def stu_issuingHistory(request):
         context = {
             'borrowBooks': request.user.borrowbook_set.all(),
             'returnedBooks': request.user.returnbook_set.all(),
-            'late_fees': library_settings.objects.filter(id = 1).first().late_fees
         }
         return render(request, 'home/stu_issuingHistory.html', context)
     else:
@@ -354,9 +359,9 @@ def stu_rating(request, pk):
     if request.method == 'POST':
         rating = int(request.POST.get('rating', 0))
         current_book = books.objects.filter(id = pk).first()
-        issueBooks = request.user.borrowbook_set.all().union(request.user.returnbook_set.all())
+        issueBooks = request.user.borrowbook_set.values_list('book', flat = True).union(request.user.returnbook_set.values_list('book', flat = True))
         for issueBook in issueBooks:
-            if current_book == issueBook.book:
+            if current_book.id == issueBook:
                 rate.objects.create(user = request.user, rating = rating, book = current_book)
                 messages.success(request, f'Your rating was successfully recorded')
                 return redirect('stu_book-page', pk)
@@ -364,3 +369,37 @@ def stu_rating(request, pk):
         return redirect('stu_book-page', pk)
     else:
         return HttpResponse("404 - Not Allowed")
+    
+
+def mark_favourite(request, pk):
+    current_book = books.objects.get(id = pk)
+    if request.user.favourite_set.filter(book = current_book):
+        messages.error(request, f'{current_book.name} is already in your favourites')
+        return redirect("stu_book-page", pk)
+    favourite.objects.create(user = request.user, book = current_book, is_favourite = True)
+    messages.success(request, f'{current_book.name} is successfully added to favourites')
+    return redirect('stu_book-page', pk)
+
+def remove_favourite(request, pk):
+    current_book = books.objects.get(id = pk)
+    favourite_book = request.user.favourite_set.filter(book = current_book).first()
+    if favourite_book:
+        favourite_book.delete()
+        messages.success(request, f'{current_book.name} is successfully removed from favourites')
+        return redirect('stu_book-page', pk)
+    else:
+        messages.info(request, f'{current_book.name} is already added to your favourites')
+        return redirect('stu_book-page', pk)
+    
+class favourite_list(LoginRequiredMixin, ListView):
+    model = favourite
+    template_name = 'home/stu_favouriteList.html'
+    content_object_name = 'favourites'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get the default context
+        context = super().get_context_data(**kwargs)
+        # Add custom context data
+        context['favourites'] = self.request.user.favourite_set.all()
+        return context
+
