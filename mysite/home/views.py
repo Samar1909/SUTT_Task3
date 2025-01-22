@@ -13,7 +13,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import timedelta
 from django.core.paginator import Paginator
 from django.views import View
-from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank, TrigramSimilarity
+from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
+
+
 # Create your views here.
 
 def home_page(request):
@@ -220,6 +222,34 @@ def stu_profileUpdate(request):
     }
     return render(request, 'home/stu_profileUpdate.html', context)
 
+# def HandleSearch(request):
+#     if request.user.is_authenticated:
+#         q = request.GET['query']
+#         if request.user.profile.is_student == True:
+#             base_template = 'home/stu_base.html'
+#         else:
+#             base_template = 'home/lib_base.html'
+        
+#         if q:
+#             vector = SearchVector('name', 'author', 'pub', 'isbn')
+#             query = SearchQuery(q)
+#             allBooks = books.objects.annotate(rank = SearchRank(vector, query)).filter(rank__gt = 0).order_by('-rank')
+            
+#         else:
+#             allBooks = 0
+
+#         context = {
+#             "base_template" : base_template,
+#             "allBooks" : allBooks,
+#             "query" : q
+#         }
+#         if len(allBooks) == 0:
+#             messages.warning(request, "No search results found. Please refine your query.")
+#         return render(request, 'home/handleSearch.html', context)
+#     else:
+#         messages.error(request, f'You need to login first')
+#         return redirect('home-page')
+
 def HandleSearch(request):
     if request.user.is_authenticated:
         q = request.GET['query']
@@ -227,15 +257,17 @@ def HandleSearch(request):
             base_template = 'home/stu_base.html'
         else:
             base_template = 'home/lib_base.html'
-        
-        if q:
-            vector = SearchVector('name', 'author', 'pub', 'isbn')
-            query = SearchQuery(q)
-            allBooks = books.objects.annotate(rank = SearchRank(vector, query)).filter(rank__gte = 0.001).order_by('-rank')
-            
-        else:
-            allBooks = 0
 
+        if len(q)>78:
+            allBooks=books.objects.none()
+        
+        else:
+            allBooksName = books.objects.filter(name__icontains = q)
+            allBooksAuthor = books.objects.filter(author__icontains = q)
+            allBooksPub = books.objects.filter(pub__icontains = q)
+            allBooksisbn = books.objects.filter(isbn__icontains = q)
+            allBooks = allBooksName | allBooksAuthor | allBooksPub | allBooksisbn
+        
         context = {
             "base_template" : base_template,
             "allBooks" : allBooks,
