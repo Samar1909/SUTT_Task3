@@ -232,6 +232,7 @@ def HandleSearch(request):
             vector = SearchVector('name', 'author', 'pub', 'isbn')
             query = SearchQuery(q)
             allBooks = books.objects.annotate(rank = SearchRank(vector, query)).filter(rank__gte = 0.001).order_by('-rank')
+            
         else:
             allBooks = 0
 

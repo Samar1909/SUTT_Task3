@@ -41,7 +41,6 @@ class books(models.Model):
     isbn = models.CharField(max_length = 20)
     copies_total = models.IntegerField()
     copies_available = models.IntegerField()
-    cover_img = models.ImageField(default = 'default.jpg', upload_to = 'cover_image')
 
     def __str__(self):
         return self.name
