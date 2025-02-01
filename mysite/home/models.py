@@ -42,6 +42,14 @@ class books(models.Model):
     copies_total = models.IntegerField()
     copies_available = models.IntegerField()
 
+    class Meta:
+        indexes = [
+            models.Index(name="books_name_trgm_idx", fields=["name"]),
+            models.Index(name="books_isbn_trgm_idx", fields=["isbn"]),
+            models.Index(name="books_author_trgm_idx", fields=["author"]),
+            models.Index(name="books_pub_trgm_idx", fields=["pub"]),
+        ]
+
     def __str__(self):
         return self.name
     

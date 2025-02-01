@@ -13,8 +13,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from datetime import timedelta
 from django.core.paginator import Paginator
 from django.views import View
-from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
-
+from django.contrib.postgres.search import TrigramSimilarity
+from django.db.models import Q
 
 # Create your views here.
 
@@ -222,34 +222,6 @@ def stu_profileUpdate(request):
     }
     return render(request, 'home/stu_profileUpdate.html', context)
 
-# def HandleSearch(request):
-#     if request.user.is_authenticated:
-#         q = request.GET['query']
-#         if request.user.profile.is_student == True:
-#             base_template = 'home/stu_base.html'
-#         else:
-#             base_template = 'home/lib_base.html'
-        
-#         if q:
-#             vector = SearchVector('name', 'author', 'pub', 'isbn')
-#             query = SearchQuery(q)
-#             allBooks = books.objects.annotate(rank = SearchRank(vector, query)).filter(rank__gt = 0).order_by('-rank')
-            
-#         else:
-#             allBooks = 0
-
-#         context = {
-#             "base_template" : base_template,
-#             "allBooks" : allBooks,
-#             "query" : q
-#         }
-#         if len(allBooks) == 0:
-#             messages.warning(request, "No search results found. Please refine your query.")
-#         return render(request, 'home/handleSearch.html', context)
-#     else:
-#         messages.error(request, f'You need to login first')
-#         return redirect('home-page')
-
 def HandleSearch(request):
     if request.user.is_authenticated:
         q = request.GET['query']
@@ -262,23 +234,62 @@ def HandleSearch(request):
             allBooks=books.objects.none()
         
         else:
-            allBooksName = books.objects.filter(name__icontains = q)
-            allBooksAuthor = books.objects.filter(author__icontains = q)
-            allBooksPub = books.objects.filter(pub__icontains = q)
-            allBooksisbn = books.objects.filter(isbn__icontains = q)
-            allBooks = allBooksName | allBooksAuthor | allBooksPub | allBooksisbn
+            allBooks = books.objects.annotate(
+                    similarity_name=TrigramSimilarity('name', q),
+                    similarity_isbn=TrigramSimilarity('isbn', q),
+                    similarity_author=TrigramSimilarity('author', q),
+                    similarity_pub=TrigramSimilarity('pub', q),
+            ).filter(
+            Q(similarity_name__gte=0.05) |
+            Q(similarity_isbn__gte=0.05) |
+            Q(similarity_author__gte=0.05) |
+            Q(similarity_pub__gte=0.05)
+            ).order_by('-similarity_name', '-similarity_isbn', '-similarity_author', '-similarity_pub')
         
         context = {
             "base_template" : base_template,
             "allBooks" : allBooks,
             "query" : q
         }
+
         if len(allBooks) == 0:
             messages.warning(request, "No search results found. Please refine your query.")
         return render(request, 'home/handleSearch.html', context)
+    
     else:
         messages.error(request, f'You need to login first')
         return redirect('home-page')
+
+
+# def HandleSearch(request):
+#     if request.user.is_authenticated:
+#         q = request.GET['query']
+#         if request.user.profile.is_student == True:
+#             base_template = 'home/stu_base.html'
+#         else:
+#             base_template = 'home/lib_base.html'
+
+#         if len(q)>78:
+#             allBooks=books.objects.none()
+        
+#         else:
+#             allBooksName = books.objects.filter(name__icontains = q)
+#             allBooksAuthor = books.objects.filter(author__icontains = q)
+#             allBooksPub = books.objects.filter(pub__icontains = q)
+#             allBooksisbn = books.objects.filter(isbn__icontains = q)
+#             allBooks = allBooksName | allBooksAuthor | allBooksPub | allBooksisbn
+        
+#         context = {
+#             "base_template" : base_template,
+#             "allBooks" : allBooks,
+#             "query" : q
+#         }
+#         if len(allBooks) == 0:
+#             messages.warning(request, "No search results found. Please refine your query.")
+#         return render(request, 'home/handleSearch.html', context)
+#     else:
+#         messages.error(request, f'You need to login first')
+#         return redirect('home-page')
     
 
 def stu_bookDetailPage(request, pk):
